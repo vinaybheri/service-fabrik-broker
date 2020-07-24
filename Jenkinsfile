@@ -12,7 +12,6 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                echo "WSS_PROD_NAME: ${WSS_PROD_NAME}"
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
@@ -89,7 +88,7 @@ pipeline {
                         sh 'rm -rfv broker/package.json'
                         whitesourceExecuteScan(script: this,
                             scanType: 'npm',
-                            productName: 'SHC - SF-INTEROPERATOR-TEST',
+                            productName: "${WSS_PROD_NAME}",
                             //whitesource/productToken: "${WHITESOURCE_PRODUCT_TOKEN}",
                             userTokenCredentialsId: 'interoperator_whitesource_test_id',
                             configFilePath: './wss-unified-agent.config',
@@ -102,7 +101,7 @@ pipeline {
                     steps {
                         whitesourceExecuteScan(script: this,
                             scanType: 'golang',
-                            productName: 'SHC - SF-INTEROPERATOR-TEST',
+                            productName: "${WSS_PROD_NAME}",
                             //whitesource/productToken: "${WHITESOURCE_PRODUCT_TOKEN}",
                             userTokenCredentialsId: 'interoperator_whitesource_test_id',
                             configFilePath: './wss-unified-agent.config',
