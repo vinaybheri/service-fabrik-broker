@@ -17,7 +17,9 @@ pipeline {
                 echo "[TEST_INFO] : setup"
                 script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
+                    def CURRENT_CHART_VERSION = ${datas.appVersion}
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
+                    echo "[TEST_INFO] : CURRENT_CHART_VERSION: ${CURRENT_CHART_VERSION}"
                 }
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
@@ -31,6 +33,15 @@ pipeline {
                 sh 'rm -rf broker/test'
                 sh 'rm -rf webhooks'
                 sh 'cat helm-charts/interoperator/Chart.yaml'
+            }
+        }
+        stage('Release') {
+            when {
+                environment name: 'RELEASE', value: 'true'
+            }   
+            steps {
+                 sh '''sed -i "s/$CURRENT_CHART_VERSION/${env.IMAGE_TAG}/g" "helm-charts/interoperator/Chart.yaml"'''
+                 sh 'cat helm-charts/interoperator/Chart.yaml'
             }
         }
         /*stage('DockerBuild') {
