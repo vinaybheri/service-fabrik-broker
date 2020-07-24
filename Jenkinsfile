@@ -111,7 +111,7 @@ pipeline {
                             orgToken: "${WHITESOURCE_ORG_TOKEN}")
                     }
                 }
-            }*/
-        }
+            }
+        }*/
     }
 }
