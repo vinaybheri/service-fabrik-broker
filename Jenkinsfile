@@ -23,7 +23,7 @@ pipeline {
                 }
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
-                setupPipelineEnvironment script: this
+                //setupPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
                 sh 'rm -rf broker/applications/deployment_hooks'
                 sh 'rm -rf broker/applications/extensions'
@@ -40,7 +40,7 @@ pipeline {
             }   
             steps {
                  echo "Updating chart.yaml file"
-                 sh 'sed -i "s/${datas.appVersion}/${env.IMAGE_TAG}/g" helm-charts/interoperator/Chart.yaml'
+                 sh "sed -i "s/${datas.appVersion}/${env.IMAGE_TAG}/g" helm-charts/interoperator/Chart.yaml"
                  sh 'cat helm-charts/interoperator/Chart.yaml'
             }
         }
