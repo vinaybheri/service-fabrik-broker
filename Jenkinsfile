@@ -8,6 +8,7 @@ pipeline {
     
     parameters {
         string(defaultValue: 'test', description: 'Enter Docker image tag version', name: 'IMAGE_TAG')
+        booleanParam(defaultValue: false, description: 'Enable for final release', name: 'RELEASE')
     }
     stages {
         stage('Setup') {
