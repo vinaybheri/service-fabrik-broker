@@ -40,7 +40,7 @@ pipeline {
             }   
             steps {
                  echo "Updating chart.yaml file"
-                 sh "sed -i "s/${datas.appVersion}/${env.IMAGE_TAG}/g" helm-charts/interoperator/Chart.yaml"
+                 sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                  sh 'cat helm-charts/interoperator/Chart.yaml'
             }
         }
