@@ -2,7 +2,7 @@
 
 pipeline {    
     environment {
-        imageTag = "${env.IMAGE_TAG}"
+        //imageTag = "${env.IMAGE_TAG}"
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
     }
     agent any
@@ -13,13 +13,9 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                echo "[INFO] : imageTag: ${imageTag}"
-                echo "[INFO]: IMAGE_TAG: ${env.IMAGE_TAG}"
-                echo "[INFO] : WHITESOURCE_ORG_TOKEN: ${WHITESOURCE_ORG_TOKEN}"
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
-                //setupCommonPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
                 sh 'rm -rf broker/applications/deployment_hooks'
                 sh 'rm -rf broker/applications/extensions'
@@ -36,12 +32,12 @@ pipeline {
                     steps {
                         kanikoExecute(script: this,
                             dockerConfigJsonCredentialsId: 'K8sbksrvdockerConfigJsonCredentialsId',
-                            containerImage: "${ARTIFACT_DOCKER_HOST_URL}/servicefabrikjenkins/service-fabrik-broker:${imageTag}",
+                            containerImage: "${ARTIFACT_DOCKER_HOST_URL}/servicefabrikjenkins/service-fabrik-broker:${env.IMAGE_TAG}",
                             dockerfilePath: 'broker/Dockerfile',
                             customTlsCertificateLinks: ["${CUSTOM_TLS_CERT_1}", "${CUSTOM_TLS_CERT_2}"])
                         kanikoExecute(script: this,
                             dockerConfigJsonCredentialsId: 'DockerHubCredentialsId',
-                            containerImage: "docker.io/servicefabrikjenkins/service-fabrik-broker:${imageTag}",
+                            containerImage: "docker.io/servicefabrikjenkins/service-fabrik-broker:${env.IMAGE_TAG}",
                             dockerfilePath: 'broker/Dockerfile')
                     }
                 }
@@ -49,12 +45,12 @@ pipeline {
                     steps {
                         kanikoExecute(script: this,
                             dockerConfigJsonCredentialsId: 'K8sbksrvdockerConfigJsonCredentialsId',
-                            containerImage: "${ARTIFACT_DOCKER_HOST_URL}/servicefabrikjenkins/service-fabrik-interoperator:${imageTag}",
+                            containerImage: "${ARTIFACT_DOCKER_HOST_URL}/servicefabrikjenkins/service-fabrik-interoperator:${env.IMAGE_TAG}",
                             dockerfilePath: 'interoperator/Dockerfile',
                             customTlsCertificateLinks: ["${CUSTOM_TLS_CERT_1}", "${CUSTOM_TLS_CERT_2}"])
                         kanikoExecute(script: this,
                             dockerConfigJsonCredentialsId: 'DockerHubCredentialsId',
-                            containerImage: "docker.io/servicefabrikjenkins/service-fabrik-interoperator:${imageTag}",
+                            containerImage: "docker.io/servicefabrikjenkins/service-fabrik-interoperator:${env.IMAGE_TAG}",
                             dockerfilePath: 'interoperator/Dockerfile')
                     }
                 }
