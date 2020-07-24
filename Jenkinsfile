@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        imageTag = "$IMAGE_TAG"
+        imageTag = "${env.IMAGE_TAG}"
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
     }
     agent any
@@ -14,10 +14,10 @@ pipeline {
         stage('Setup') {
             steps {
                 echo "[INFO] : imageTag: ${imageTag}"
-                echo "[INFO]: IMAGE_TAG: ${IMAGE_TAG}"
+                echo "[INFO]: IMAGE_TAG: ${env.IMAGE_TAG}"
                 echo "[INFO] : WHITESOURCE_ORG_TOKEN: ${WHITESOURCE_ORG_TOKEN}"
                 deleteDir()
-                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
+                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'vinaybheri-patch-1', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 //setupCommonPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
