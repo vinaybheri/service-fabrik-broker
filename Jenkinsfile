@@ -3,7 +3,6 @@
 pipeline {    
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
-        def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
     }
     agent any
     
@@ -21,7 +20,7 @@ pipeline {
                     //def CURRENT_CHART_VERSION = ${datas.appVersion}
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
                     //echo "[TEST_INFO] : CURRENT_CHART_VERSION: ${CURRENT_CHART_VERSION}"
-                }*/
+                }
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 //setupPipelineEnvironment script: this
@@ -32,7 +31,7 @@ pipeline {
                 sh 'rm -rf broker/applications/reports'
                 sh 'rm -rf broker/applications/scheduler'
                 sh 'rm -rf broker/test'
-                sh 'rm -rf webhooks'
+                sh 'rm -rf webhooks'*/
             }
         }
         stage('Release') {
@@ -40,9 +39,15 @@ pipeline {
                 environment name: 'RELEASE', value: 'true'
             }   
             steps {
-                 echo "Updating chart.yaml file"
-                 sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
-                 sh 'cat helm-charts/interoperator/Chart.yaml'
+                script {
+                    def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
+                    //def CURRENT_CHART_VERSION = ${datas.appVersion}
+                    echo "[TEST_INFO] : Got version as ${datas.appVersion} "
+                    //echo "[TEST_INFO] : CURRENT_CHART_VERSION: ${CURRENT_CHART_VERSION}"
+                    echo "Updating chart.yaml file"
+                    sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
+                    sh 'cat helm-charts/interoperator/Chart.yaml'
+                 }   
             }
         }
         /*stage('DockerBuild') {
