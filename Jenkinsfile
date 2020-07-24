@@ -38,7 +38,7 @@ pipeline {
                     echo "LINE: $LINE"
                        
                     
-                    sh '''cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | cut -d ' ' -f1'''
+                    //sh '''cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | cut -d ' ' -f1'''
                     //sh "LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION="$(cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | awk '{print $1}')""
                    // echo "LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION: $LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION"
                     sh 'git diff'
