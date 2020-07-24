@@ -34,7 +34,8 @@ pipeline {
                     sh 'cat helm-charts/interoperator/Chart.yaml'
                     echo "TEST"
                     
-                    sh "cat -n helm-charts/interoperator/values.yaml | awk '/broker:$/,/tag/ { print }' | grep -E 'tag' | awk '{print \${1} }'"
+                    sh "LINE=$(cat -n helm-charts/interoperator/values.yaml | awk '/broker:$/,/tag/ { print }' | grep -E 'tag')"
+                    echo "LINE: $LINE"
                        
                     
                     sh '''cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | cut -d ' ' -f1'''
