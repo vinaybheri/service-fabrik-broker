@@ -23,9 +23,10 @@ pipeline {
                 sh 'rm -rf broker/applications/scheduler'
                 sh 'rm -rf broker/test'
                 sh 'rm -rf webhooks'
+                sh 'cat helm-charts/interoperator/Chart.yaml'
             }
         }
-        stage('DockerBuild') {
+        /*stage('DockerBuild') {
             parallel {
                 stage('Build Broker Image') {
                     steps {
@@ -110,7 +111,7 @@ pipeline {
                             orgToken: "${WHITESOURCE_ORG_TOKEN}")
                     }
                 }
-            }
+            }*/
         }
     }
 }
