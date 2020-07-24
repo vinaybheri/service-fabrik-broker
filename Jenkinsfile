@@ -16,9 +16,6 @@ pipeline {
    
             steps {
                 echo "[TEST_INFO] : setup"
-                echo "SFDockerCredentialsId: $SFDockerCredentialsId"
-                echo "User: ${SFDockerCredentialsId_USR}"
-                echo "Pwd: ${SFDockerCredentialsId_PSW}"
                 /*script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
                     //def CURRENT_CHART_VERSION = ${datas.appVersion}
