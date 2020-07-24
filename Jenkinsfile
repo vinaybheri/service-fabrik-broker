@@ -4,7 +4,7 @@ pipeline {
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
         SFDockerCredentialsId = credentials('SFDockerCredentialsId')
-        USERNAME = "${SFDockerCredentialsId%:*}"
+        //USERNAME = "${SFDockerCredentialsId%:*}"
     }
     agent any
     
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo "[TEST_INFO] : setup"
                 echo "SFDockerCredentialsId: $SFDockerCredentialsId"
-                echo "USERNAME: $USERNAME"
+                //echo "USERNAME: $USERNAME"
                 /*script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
                     //def CURRENT_CHART_VERSION = ${datas.appVersion}
@@ -39,6 +39,7 @@ pipeline {
             }
         }
         stage('Release') {
+            echo "Stage: Release"
             when {
                 environment name: 'RELEASE', value: 'true'
             }   
