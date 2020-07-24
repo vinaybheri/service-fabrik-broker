@@ -1,15 +1,15 @@
 @Library(['piper-lib', 'piper-lib-os']) _
 
-pipeline {
-    parameters {
-        string(defaultValue: 'test', description: 'Enter Docker image tag version', name: 'IMAGE_TAG')
-    }
-    
+pipeline {    
     environment {
         imageTag = "${env.IMAGE_TAG}"
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
     }
     agent any
+    
+    parameters {
+        string(defaultValue: 'test', description: 'Enter Docker image tag version', name: 'IMAGE_TAG')
+    }
     stages {
         stage('Setup') {
             steps {
@@ -17,7 +17,7 @@ pipeline {
                 echo "[INFO]: IMAGE_TAG: ${env.IMAGE_TAG}"
                 echo "[INFO] : WHITESOURCE_ORG_TOKEN: ${WHITESOURCE_ORG_TOKEN}"
                 deleteDir()
-                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'vinaybheri-patch-1', credentialsId: 'GithubOsCredentialsId'
+                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 //setupCommonPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
