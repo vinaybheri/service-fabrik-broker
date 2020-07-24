@@ -36,11 +36,11 @@ pipeline {
                     os_arch="linux"
                     curl --silent -LO "https://storage.googleapis.com/kubernetes-helm/helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
-                    echo PATH:$PATH
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
+                    echo PATH:$PATH
+                    help
                     '''
-                    sh 'helm'
                  }   
             }
         }
