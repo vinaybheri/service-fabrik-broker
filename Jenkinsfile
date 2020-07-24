@@ -32,7 +32,6 @@ pipeline {
                 sh 'rm -rf broker/applications/scheduler'
                 sh 'rm -rf broker/test'
                 sh 'rm -rf webhooks'
-                sh 'cat helm-charts/interoperator/Chart.yaml'
             }
         }
         stage('Release') {
@@ -40,6 +39,7 @@ pipeline {
                 environment name: 'RELEASE', value: 'true'
             }   
             steps {
+                 echo "Updating chart.yaml file"
                  sh '''sed -i "s/$CURRENT_CHART_VERSION/${env.IMAGE_TAG}/g" "helm-charts/interoperator/Chart.yaml"'''
                  sh 'cat helm-charts/interoperator/Chart.yaml'
             }
