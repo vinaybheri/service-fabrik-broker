@@ -3,7 +3,7 @@
 pipeline {    
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
-        SFDockerCredentialsId = credentials('SFDockerCredentialsId')
+        GITHUB_OS_TOKEN = credentials('GithubOsToken')
     }
     agent any
     
@@ -53,6 +53,12 @@ pipeline {
                     echo "Updating chart.yaml file"
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh 'cat helm-charts/interoperator/Chart.yaml'
+                    
+                    sh '''
+                        LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION="$(cat -n helm-charts/interoperator/values.yaml | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | awk '{print $1}')"
+                        sed -r -i "${LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION}s/tag.*/tag: ${env.IMAGE_TAG}/1" helm-charts/interoperator/values.yaml
+                    '''
+                    sh 'git diff'
                  }   
             }
         }
