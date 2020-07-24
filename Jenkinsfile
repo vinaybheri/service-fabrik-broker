@@ -1,8 +1,12 @@
 @Library(['piper-lib', 'piper-lib-os']) _
 
 pipeline {
+    parameters {
+        string(defaultValue: 'test', description: 'Enter Docker image tag version', name: 'IMAGE_TAG')
+    }
+    
     environment {
-        imageTag = "kaniko"
+        imageTag = "$IMAGE_TAG"
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
     }
     agent any
@@ -10,6 +14,7 @@ pipeline {
         stage('Setup') {
             steps {
                 echo "[INFO] : imageTag: ${imageTag}"
+                echo "[INFO]: IMAGE_TAG: ${IMAGE_TAG}"
                 echo "[INFO] : WHITESOURCE_ORG_TOKEN: ${WHITESOURCE_ORG_TOKEN}"
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
