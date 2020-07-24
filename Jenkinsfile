@@ -17,7 +17,7 @@ pipeline {
                 echo "[TEST_INFO] : setup"
                 script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
-                    def CURRENT_CHART_VERSION = ${datas.appVersion}
+                    //def CURRENT_CHART_VERSION = ${datas.appVersion}
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
                     echo "[TEST_INFO] : CURRENT_CHART_VERSION: ${CURRENT_CHART_VERSION}"
                 }
