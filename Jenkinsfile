@@ -2,7 +2,6 @@
 
 pipeline {    
     environment {
-        //imageTag = "${env.IMAGE_TAG}"
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
     }
     agent any
@@ -66,7 +65,7 @@ pipeline {
                             protecodeGroup: '1168',
                             protecodeServerUrl: "${PROTECODE_SERVER_URL}",
                             dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
-                            dockerImage: "servicefabrikjenkins/service-fabrik-broker:${imageTag}",
+                            dockerImage: "servicefabrikjenkins/service-fabrik-broker:${env.IMAGE_TAG}",
                             dockerCredentialsId: 'K8sbksrvdockerConfigJsonCredentialsId',
                             reportFileName: 'protecode_report_broker.pdf')
                     }
@@ -78,7 +77,7 @@ pipeline {
                             protecodeGroup: '1168',
                             protecodeServerUrl: "${PROTECODE_SERVER_URL}",
                             dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
-                            dockerImage: "servicefabrikjenkins/service-fabrik-interoperator:${imageTag}",
+                            dockerImage: "servicefabrikjenkins/service-fabrik-interoperator:${env.IMAGE_TAG}",
                             dockerCredentialsId: 'K8sbksrvdockerConfigJsonCredentialsId',
                             reportFileName: 'protecode_report_interoperator.pdf')
                     }
