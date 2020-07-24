@@ -11,7 +11,13 @@ pipeline {
     }
     stages {
         stage('Setup') {
+   
             steps {
+                echo "[TEST_INFO] : setup"
+                script {
+                    def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
+                    echo "[TEST_INFO] : Got version as ${datas.appVersion} "
+                }
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
