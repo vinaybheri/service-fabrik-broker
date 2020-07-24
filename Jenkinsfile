@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                echo "WSS_PROD_NAME: $WSS_PROD_NAME"
+                echo "WSS_PROD_NAME: ${WSS_PROD_NAME}"
                 deleteDir()
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'test', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
