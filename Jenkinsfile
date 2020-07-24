@@ -39,7 +39,7 @@ pipeline {
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
                     echo PATH:$PATH
-                    help
+                    helm
                     '''
                  }   
             }
