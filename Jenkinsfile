@@ -33,7 +33,7 @@ pipeline {
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh 'cat helm-charts/interoperator/Chart.yaml'
                     echo "TEST"
-                    sh '''cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | awk '{print $1}''''
+                    sh '''cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | awk "{print $1}"'''
                     //sh "LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION="$(cat -n "helm-charts/interoperator/values.yaml" | awk '/broker:$/,/tag/ { print }' | grep -E "tag" | awk '{print $1}')""
                    // echo "LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION: $LINE_NO_SF_BROKER_DOCKER_IMAGE_VERSION"
                     sh 'git diff'
