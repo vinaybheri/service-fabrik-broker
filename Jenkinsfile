@@ -32,14 +32,18 @@ pipeline {
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh 'git diff'
                     sh '''
-                    helm_version="v2.16.1"
+                    helm_version="v3.2.4"
                     os_arch="linux"
                     curl --silent -LO "https://storage.googleapis.com/kubernetes-helm/helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
                     echo PATH:$PATH
-                    helm
+                    helm version
+                    pushd helm-charts/interoperator
+                    helm package . || true
+                    ls -l
+                    echo "help package created"
                     '''
                  }   
             }
