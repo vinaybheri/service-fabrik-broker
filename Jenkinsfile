@@ -17,6 +17,7 @@ pipeline {
         stage('Setup') {
    
             steps {
+                deleteDir()
                 echo "[TEST_INFO] : setup"
                 sh 'echo "[TEST_INFO] : env tag : ${NEXT_VERSION}"'
             }
@@ -38,9 +39,9 @@ pipeline {
                    // sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh '''
                     echo "Updating Chart.yaml"
-                    sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml
+                    sed -i "s/${datas.appVersion}/${ENV_IMAGE_TAG}/g" helm-charts/interoperator/Chart.yaml
                     echo "Updating values.yaml"
-                    sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml
+                    sed -i "s/${datas.appVersion}/${ENV_IMAGE_TAG}/g" helm-charts/interoperator/values.yaml
                     git diff
                     git add helm-charts/interoperator/Chart.yaml
                     git add helm-charts/interoperator/values.yaml
