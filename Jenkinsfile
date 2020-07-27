@@ -36,7 +36,6 @@ pipeline {
                     sh """sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh """sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh '''
-                    charts/interoperator/values.yaml
                     git diff
                     git add helm-charts/interoperator/Chart.yaml
                     git add helm-charts/interoperator/values.yaml
