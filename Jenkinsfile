@@ -18,7 +18,7 @@ pipeline {
    
             steps {
                 echo "[TEST_INFO] : setup"
-                sh 'echo "[TEST_INFO] : env tag : ${NEXT_VERSION}'
+                sh 'echo "[TEST_INFO] : env tag : ${NEXT_VERSION}"'
             }
         }
         stage('Release') {
