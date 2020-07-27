@@ -4,6 +4,7 @@ pipeline {
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
         GITHUB_OS_TOKEN = credentials('GithubOsToken')
+        
     }
     agent any
     
@@ -30,7 +31,12 @@ pipeline {
                     echo "Updating chart.yaml file"
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
-                    sh 'git diff'
+                    sh '''
+                    git diff
+                    git add helm-charts/interoperator/Chart.yaml
+                    git add helm-charts/interoperator/values.yaml
+                    git commit -m "Updating Helm chart and docker image versions"
+                    '''
                     sh '''
                     helm_version="v3.2.4"
                     os_arch="linux"
@@ -45,6 +51,12 @@ pipeline {
                     helm package . || true
                     ls -l
                     echo "help package created"
+                    cd $oldpath
+                    git clone "https://github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
+                    mv helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz "gh-pages/helm-charts/"
+                    helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
+                    cd gh-pages
+                    git diff
                     '''
                  }   
             }
