@@ -40,6 +40,18 @@ pipeline {
                     git add helm-charts/interoperator/Chart.yaml
                     git add helm-charts/interoperator/values.yaml
                     git commit -m "Updating Helm chart and docker image versions"
+                    
+                    pull_request_data="$(cat << EOF
+{
+  "title": "Updating docker Version",
+  "base": "master",
+  "head": "vinaybheri:dev_pr",
+  "body": "Updating new docker versions"
+}
+EOF
+)"
+                    echo "pull_request_data: $pull_request_data"
+                    
                     '''
                   /*  sh '''
                     helm_version="v3.2.4"
