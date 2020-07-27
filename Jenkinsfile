@@ -55,7 +55,7 @@ pipeline {
                     rm -rf gh-pages
                     git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
                     ls
-                    mv "helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz" "gh-pages/helm-charts/"
+                    cp helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz gh-pages/helm-charts/
                     helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                     cd gh-pages
                     git diff
