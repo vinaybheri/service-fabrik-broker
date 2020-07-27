@@ -4,6 +4,7 @@ pipeline {
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
         GITHUB_OS_TOKEN = credentials('GithubOsToken')
+        NEXT_VERSION = "${env.IMAGE_TAG}"
         
     }
     agent any
@@ -17,7 +18,7 @@ pipeline {
    
             steps {
                 echo "[TEST_INFO] : setup"
-                sh 'echo "[TEST_INFO] : env tag : $(echo ${env.IMAGE_TAG})"'
+                sh 'echo "[TEST_INFO] : env tag : ${NEXT_VERSION}'
             }
         }
         stage('Release') {
