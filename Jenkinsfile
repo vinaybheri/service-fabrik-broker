@@ -30,7 +30,6 @@ pipeline {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
                     echo "Updating chart.yaml file"
-                    echo "IMAGE TAG to version ${version}"
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh '''
