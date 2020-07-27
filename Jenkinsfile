@@ -32,7 +32,6 @@ pipeline {
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh 'git diff'
                     sh '''
-                    #!/bin/bash
                     helm_version="v3.2.4"
                     os_arch="linux"
                     curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
@@ -41,7 +40,8 @@ pipeline {
                     export PATH
                     echo PATH:$PATH
                     helm version
-                    pushd helm-charts/interoperator
+                    oldpath=$PWD
+                    cd helm-charts/interoperator
                     helm package . || true
                     ls -l
                     echo "help package created"
