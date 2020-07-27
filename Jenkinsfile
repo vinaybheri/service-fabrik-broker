@@ -38,9 +38,12 @@ pipeline {
                     git commit -m "Updating Helm chart and docker image versions"
                     '''
                     sh """
-                    helm_version=v3.2.4
+                    echo 1
+                    helm_version='v3.2.4'
                     os_arch=linux
+                    echo 2
                     curl --silent -LO https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz
+                    echo 3
                     tar -zxf helm-${helm_version}-${os_arch}-amd64.tar.gz
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
