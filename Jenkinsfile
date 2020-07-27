@@ -17,6 +17,7 @@ pipeline {
    
             steps {
                 echo "[TEST_INFO] : setup"
+                sh 'echo "[TEST INFO] : env tag : ${env.IMAGE_TAG}"'
             }
         }
         stage('Release') {
@@ -58,10 +59,7 @@ pipeline {
                     git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
                     ls
                     echo "copying"
-                    '''
-                    sh """cp helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz gh-pages/helm-charts/"""
-                    
-                    sh '''
+                    cp helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz gh-pages/helm-charts/
                     echo "copying Done"
                     helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                     cd gh-pages
