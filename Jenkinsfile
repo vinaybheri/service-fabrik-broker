@@ -25,10 +25,14 @@ pipeline {
             }   
             steps {
                 echo "Stage: Release"
+     
                 script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
+                    def version = ${env.IMAGE_TAG}
+             
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
                     echo "Updating chart.yaml file"
+                    echo "IMAGE TAG to version ${version}"
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                     sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh '''
@@ -37,6 +41,7 @@ pipeline {
                     git add helm-charts/interoperator/values.yaml
                     git commit -m "Updating Helm chart and docker image versions"
                     '''
+                    sh 'echo "version : $version"'
                     sh """
                     echo 1
                     helm_version='v3.2.4'
