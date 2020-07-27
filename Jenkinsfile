@@ -34,7 +34,7 @@ pipeline {
                     sh '''
                     helm_version="v3.2.4"
                     os_arch="linux"
-                    curl --silent -LO "https://storage.googleapis.com/kubernetes-helm/helm-${helm_version}-${os_arch}-amd64.tar.gz"
+                    curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
