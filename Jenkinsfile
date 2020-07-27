@@ -37,11 +37,11 @@ pipeline {
                     git add helm-charts/interoperator/values.yaml
                     git commit -m "Updating Helm chart and docker image versions"
                     '''
-                    sh '''
-                    helm_version="v3.2.4"
-                    os_arch="linux"
-                    curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
-                    tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
+                    sh """
+                    helm_version=v3.2.4
+                    os_arch=linux
+                    curl --silent -LO https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz
+                    tar -zxf helm-${helm_version}-${os_arch}-amd64.tar.gz
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
                     echo PATH:$PATH
@@ -61,7 +61,7 @@ pipeline {
                     helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                     cd gh-pages
                     git diff
-                    '''
+                    """
                  }   
             }
         }
