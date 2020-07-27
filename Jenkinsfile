@@ -19,7 +19,7 @@ pipeline {
             steps {
                 deleteDir()
                 echo "[TEST_INFO] : setup"
-                sh 'echo "[TEST_INFO] : env tag : ${NEXT_VERSION}"'
+                sh 'echo "[TEST_INFO] : env tag : ${ENV_IMAGE_TAG}"'
             }
         }
         stage('Release') {
