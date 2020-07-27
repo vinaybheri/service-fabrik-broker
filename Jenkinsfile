@@ -33,17 +33,10 @@ pipeline {
      
                 script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
-                    echo "[TEST_INFO] : Got version as ${datas.appVersion} "
-                    echo "Updating chart.yaml file"
-                    
-                   
-                   // sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
-                   // sh """sed -i 's/${datas.appVersion}/${env.IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
+                    sh """sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
+                    sh """sed -i 's/${datas.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                     sh '''
-                    echo "Updating Chart.yaml"
-                    sed -i s/${datas.appVersion}/${ENV_IMAGE_TAG}/g helm-charts/interoperator/Chart.yaml
-                    echo "Updating values.yaml"
-                    sed -i s/${datas.appVersion}/${ENV_IMAGE_TAG}/g helm-charts/interoperator/values.yaml
+                    charts/interoperator/values.yaml
                     git diff
                     git add helm-charts/interoperator/Chart.yaml
                     git add helm-charts/interoperator/values.yaml
