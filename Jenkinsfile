@@ -18,6 +18,8 @@ pipeline {
    
             steps {
                 deleteDir()
+                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
+                setupPipelineEnvironment script: this
                 echo "[TEST_INFO] : setup"
                 sh 'echo "[TEST_INFO] : env tag : ${ENV_IMAGE_TAG}"'
             }
