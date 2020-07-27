@@ -28,8 +28,6 @@ pipeline {
      
                 script {
                     def datas = readYaml file: 'helm-charts/interoperator/Chart.yaml'
-                    def version = ${env.IMAGE_TAG}
-             
                     echo "[TEST_INFO] : Got version as ${datas.appVersion} "
                     echo "Updating chart.yaml file"
                     echo "IMAGE TAG to version ${version}"
@@ -41,15 +39,12 @@ pipeline {
                     git add helm-charts/interoperator/values.yaml
                     git commit -m "Updating Helm chart and docker image versions"
                     '''
-                    sh 'echo "version : $version"'
-                    sh """
-                    echo 1
-                    helm_version='v3.2.4'
-                    os_arch=linux
-                    echo 2
-                    curl --silent -LO https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz
+                    sh '''
+                    helm_version="v3.2.4"
+                    os_arch="linux"
+                    curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     echo 3
-                    tar -zxf helm-${helm_version}-${os_arch}-amd64.tar.gz
+                    tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
                     PATH="$PATH:$PWD/${os_arch}-amd64"
                     export PATH
                     echo PATH:$PATH
@@ -64,12 +59,15 @@ pipeline {
                     git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
                     ls
                     echo "copying"
-                    cp "helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz" "gh-pages/helm-charts/"
+                    '''
+                    sh """cp helm-charts/interoperator/interoperator-${env.IMAGE_TAG}.tgz gh-pages/helm-charts/"""
+                    
+                    sh '''
                     echo "copying Done"
                     helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                     cd gh-pages
                     git diff
-                    """
+                    '''
                  }   
             }
         }
