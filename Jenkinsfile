@@ -59,6 +59,9 @@ pipeline {
                         mv ./kubectl bin/
                         kubectl
                         
+                        curl https://stedolan.github.io/jq/download/linux64/jq --output bin/jq
+                        chmod +x bin/jq
+                        
                         git clone "${GIT_URL_SF_CREDENTIALS}" "/tmp/sfcredentials"
                         export KUBECONFIG="/tmp/sfcredentials/k8s/n/kubeconfig.yaml"
                         K8S_VERSION_N=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
