@@ -50,6 +50,7 @@ pipeline {
                         pwd
                         ls -l
                         git tag ${ENV_IMAGE_TAG}
+                        git push --tags
                         echo "installing kubectl"
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
@@ -116,7 +117,10 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 
 """ > .release_notes
+                        text=$(cat .release_notes | sed 's/$/\\n/' | tr -d '\n') 
 
+                        echo "$text"
+                        
                         '''
                     }
                 }
