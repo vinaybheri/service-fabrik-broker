@@ -129,17 +129,17 @@ pipeline {
                             sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                             sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                             sh '''
-                            git checkout -b dev_pr
+                            git checkout -b dev_pr_${ENV_IMAGE_TAG}
                             git diff
                             git add helm-charts/interoperator/Chart.yaml
                             git add helm-charts/interoperator/values.yaml
                             git commit -m "Updating Helm chart and docker image versions"
-                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr              
+                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_${ENV_IMAGE_TAG}            
                             pull_request_data="$(cat << EOF
 {
   "title": "Updating docker Version",
   "base": "master",
-  "head": "vinaybheri:dev_pr",
+  "head": "${GITHUB_OS_ORG}:dev_pr_${ENV_IMAGE_TAG}",
   "body": "Updating new docker versions"
 }
 EOF
@@ -179,16 +179,16 @@ EOF
                             helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                             cd gh-pages
                             git diff
-                            git checkout -b dev_pr_gh-pages
+                            git checkout -b dev_pr_gh-pages_${ENV_IMAGE_TAG}
                             git add helm-charts/interoperator-${ENV_IMAGE_TAG}.tgz
                             git commit -m "Adding Helm Chart Package: interoperator-${ENV_IMAGE_TAG}.tgz"
-                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_gh-pages
+                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_gh-pages_${ENV_IMAGE_TAG}
                     
                             pull_request_data="$(cat << EOF
 {
   "title": "Adding Helm Chart package: interoperator-${ENV_IMAGE_TAG}.tgz",
   "base": "gh-pages",
-  "head": "${GITHUB_OS_ORG}:dev_pr_gh-pages",
+  "head": "${GITHUB_OS_ORG}:dev_pr_gh-pages_${ENV_IMAGE_TAG}",
   "body": "Adding New Helm Chart package"
 }
 EOF
