@@ -83,15 +83,14 @@ ${commit_list}
 - $(echo "${K8S_VERSION_N}" | awk -F "." '{print $1"."$2".x"}')
 ## How to deploy Interoperator
 Interoperator requires **helm version >= 3.0.0**, and is **not supported by helm 2**.
-"""
-echo '''
+""" > .release_notes
+echo """
 To add service fabrik interoperator helm chart repo
-```shell
+\`\`\`shell
 helm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts
 helm repo update
-```
-
-'''
+\`\`\`
+""" >> .release_notes
 
                         '''
                     }
