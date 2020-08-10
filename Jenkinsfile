@@ -124,16 +124,19 @@ generate_post_data()
   "tag_name": "${ENV_IMAGE_TAG}",
   "target_commitish": "$GIT_BRANCH",
   "name": "${ENV_IMAGE_TAG}",
-  "body": "$(cat .release_notes | sed 's/$/\n/' | tr -d '\n')",
+  "body": "$(cat .release_notes | sed 's/$/\\n/' | tr -d '\n')",
   "draft": false,
   "prerelease": false
 }
 EOF
 }
-                        repo_full_name="${GITHUB_OS_ORG}/service-fabrik-broker"
+generate_post_data
+
+'''
+/*                        repo_full_name="${GITHUB_OS_ORG}/service-fabrik-broker"
 echo "Create release $ENV_IMAGE_TAG for $repo_full_name :  branch: $GIT_BRANCH"
 curl --data "$(generate_post_data)" "https://api.github.com/repos/$repo_full_name/releases?access_token=$GITHUB_OS_TOKEN"
-          
+  */        
                         '''
                     }
                 }
