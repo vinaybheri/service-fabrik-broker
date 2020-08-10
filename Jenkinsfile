@@ -19,7 +19,7 @@ pipeline {
         stage('Setup') {
             steps {
                 deleteDir()
-                git url: 'https://github.com/${GITHUB_OS_ORG}/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
+                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
                 sh 'rm -rf broker/applications/deployment_hooks'
