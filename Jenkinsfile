@@ -40,6 +40,26 @@ pipeline {
                  echo "proceeding"   
                 }
             }
+                
+            stage('Release - Create Tag And Notes') {
+                steps {
+                    script {
+                        sh '''
+                        pwd
+                        ls -l
+                        
+                        echo "installing kubectl"
+                        kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+                        curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
+                        chmod +x ./kubectl
+                        mv ./kubectl /usr/bin
+                        kubectl
+                        '''
+                    }
+                }
+            
+            }
+         
                     
             stage('Release - Update Version') {
               steps {
