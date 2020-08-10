@@ -46,7 +46,7 @@ pipeline {
             stage('Release - Create Tag And Notes') {
                 steps {
                     script {
-                        bash '''#!/bin/bash
+                        sh '''#!/bin/bash
                         pwd
                         ls -l
                         
