@@ -91,19 +91,16 @@ EOF
                     helm version
                     
                     echo "Creating Helm Package"
-                    oldpath=$PWD
                     cd helm-charts/interoperator
                     helm package . || true
-                    ls -l
-                    echo "help package created"
+                    echo "helm package created"
                     
-                    cd $oldpath
+                    cd $WORKSPACE
                     rm -rf gh-pages
                     git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
-                    ls
-                    echo "copying Helm package"
+                    echo "Copying Helm package"
                     cp helm-charts/interoperator/interoperator-${ENV_IMAGE_TAG}.tgz gh-pages/helm-charts/
-                    echo "copying Done"
+                    echo "Copying Done"
                     helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                     cd gh-pages
                     git diff
@@ -124,7 +121,7 @@ EOF
                     echo "pull_request_data: $pull_request_data"
                     
                     curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/${GITHUB_OS_ORG}/service-fabrik-broker/pulls"
-                    
+                    cd "$WORKSPACE"
                     
                     '''
                          
