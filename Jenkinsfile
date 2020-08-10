@@ -246,7 +246,7 @@ EOF
                             last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
                             commit_list="$(git log --pretty=format:"%h: %s\\n" HEAD...${last_tag_version})"
                             
-                            echo "INFO: Generated Release notes"
+                            echo "INFO: Generating Release notes"
                             echo """## New features/Bug fixes\\n
 ${commit_list}\\n
 \\n
@@ -289,10 +289,10 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.\\n
 \\n
 \\n
 """ > .release_notes
-text=$(cat .release_notes| tr -d '\n' | tr -d '"' )
+                            text=$(cat .release_notes| tr -d '\n' | tr -d '"' )
 generate_post_data()
 {
-  cat <<EOF
+cat <<EOF
 {
   "tag_name": "${ENV_IMAGE_TAG}",
   "target_commitish": "$GIT_BRANCH",
