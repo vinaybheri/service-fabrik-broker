@@ -130,7 +130,7 @@ pipeline {
                             git add helm-charts/interoperator/Chart.yaml
                             git add helm-charts/interoperator/values.yaml
                             git commit -m "Updating Helm chart and docker image versions"
-                            git push https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker dev_pr              
+                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr              
                             pull_request_data="$(cat << EOF
 {
   "title": "Updating docker Version",
@@ -140,7 +140,7 @@ pipeline {
 }
 EOF
 )"
-                            curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/vinaybheri/service-fabrik-broker/pulls"
+                            curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/${GITHUB_OS_ORG}/service-fabrik-broker/pulls"
                         '''
                     }
                 }
