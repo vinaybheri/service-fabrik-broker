@@ -4,8 +4,10 @@ pipeline {
     environment {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
         GITHUB_OS_TOKEN = credentials('GithubOsToken')
+        GITHUB_WDF_TOKEN = credentials('GithubWdfTokenId')
         ENV_IMAGE_TAG = "${env.IMAGE_TAG}"
         GITHUB_OS_ORG = "vinaybheri"
+        GIT_URL_SF_CREDENTIALS = "https://${GITHUB_WDF_TOKEN}@${GITHUB_WDF_HOST}/servicefabrik/credentials.git"
     }
     agent any
     
@@ -57,12 +59,27 @@ pipeline {
                         mv ./kubectl bin/
                         kubectl
                         
+                        git clone "${GIT_URL_SF_CREDENTIALS}" "/tmp/sfcredentials"
+                        export KUBECONFIG="/tmp/sfcredentials/k8s/n/kubeconfig.yaml"
+                        K8S_VERSION_N=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+                        export KUBECONFIG="/tmp/sfcredentials/k8s/n-1/kubeconfig.yaml"
+                        K8S_VERSION_N_1=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+                        export KUBECONFIG="/tmp/sfcredentials/k8s/n-2/kubeconfig.yaml"
+                        K8S_VERSION_N_2=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+                        
                         last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
                         commit_list="$(git log --pretty=format:"%h: %s" HEAD...${last_tag_version})"
 
                         echo """
 ## New features/Bug fixes
 ${commit_list}
+
+## Supported K8S Version
+- $(echo "${K8S_VERSION_N_2}" | awk -F "." '{print $1"."$2".x"}')
+- $(echo "${K8S_VERSION_N_1}" | awk -F "." '{print $1"."$2".x"}')
+- $(echo "${K8S_VERSION_N}" | awk -F "." '{print $1"."$2".x"}')
+## How to deploy Interoperator
+Interoperator requires **helm version >= 3.0.0**, and is **not supported by helm 2**.
 
 """
 
