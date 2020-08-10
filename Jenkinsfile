@@ -49,6 +49,13 @@ pipeline {
                         sh '''
                         pwd
                         ls -l
+                        
+                        if git tag -l | grep "$ENV_IMAGE_TAG" 
+                        then
+                            git tag -d
+                            git push ${GIT_URL_SF_BROKER} --tags
+                        fi
+                        
                         echo "installing kubectl"
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
@@ -72,7 +79,36 @@ pipeline {
                         last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
                         commit_list="$(git log --pretty=format:"%h: %s" HEAD...${last_tag_version})"
 
-                        echo """
+                        echo """## New features/Bug fixes\n${commit_list}\n\n## Supported K8S Version\n- $(echo "${K8S_VERSION_N_2}" | awk -F "." '{print $1"."$2".x"}')\n- $(echo "${K8S_VERSION_N_1}" | awk -F "." '{print $1"."$2".x"}')\n- $(echo "${K8S_VERSION_N}" | awk -F "." '{print $1"."$2".x"}')\n## How to deploy Interoperator\nInteroperator requires **helm version >= 3.0.0**, and is **not supported by helm 2**.\n\nTo add service fabrik interoperator helm chart repo\n\`\`\`shell\nhelm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts\nhelm repo update\n\`\`\`\n\nDeploy SF Interoperator using helm\n\`\`\`shell\nhelm install --set cluster.host=sf.ingress.< clusterdomain > --namespace interoperator --version ${new_tag_version} interoperator interoperator-charts/interoperator\n\`\`\`\n**NOTE:** \`cluster.host\` should be within the [63 character limit](http://man7.org/linux/man-pages/man7/hostname.7.html).\n### Deploy SFClusters, SFServices and SFPlans and Register with Interoperator\nPlease create sfcluster CRs and add reference to secret which contains the its kubeconfig.\nFor multi-cluster support, all corresponding sfcluster CRs need to be created and their kubeconfig needs to be supplied in the corresponding secret.\nPlease note that sfcluster, sfservice and sfplans need to be deployed in the same namespace where SF is deployed (default is \`interoperator\`).\n## Upgrade from the earlier releases(special handling, downtime if any)\n\nTo add service fabrik interoperator helm chart repo if not already added\n\`\`\`shell\n# Assuming the repo name is chosen as interoperator-charts\nhelm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts\nhelm repo update\n\`\`\`\nHelm upgrade should take care of upgrading to the latest release.\n\`\`\`shell\n# Assuming current helm release name is interoperator\nhelm --namespace interoperator upgrade -i --force --wait --set cluster.host=sf.ingress.< clusterdomain > --version ${new_tag_version} interoperator interoperator-charts/interoperator\n\`\`\`\nRefer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.\n\n""" > .release_notes
+
+
+generate_post_data()
+{
+  cat <<EOF
+{
+  "tag_name": "${ENV_IMAGE_TAG}",
+  "target_commitish": "$GIT_BRANCH",
+  "name": "${ENV_IMAGE_TAG}",
+  "body": "$(cat .release_notes)",
+  "draft": false,
+  "prerelease": false
+}
+EOF
+}
+generate_post_data
+                       repo_full_name="${GITHUB_OS_ORG}/service-fabrik-broker"
+echo "Create release $ENV_IMAGE_TAG for $repo_full_name :  branch: $GIT_BRANCH"
+curl --data "$(generate_post_data)" "https://api.github.com/repos/$repo_full_name/releases?access_token=$GITHUB_OS_TOKEN"
+
+'''
+                        
+                        
+//cat .release_notes | sed 's/$/\\n/' | tr -d '\n'
+
+                        
+/*
+
+ echo """
 ## New features/Bug fixes
 ${commit_list}
 
@@ -114,21 +150,7 @@ helm --namespace interoperator upgrade -i --force --wait --set cluster.host=sf.i
 Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 
-""" > .release_notes
-
-while read line 
-do
-echo -n "${line}\\n"
-done < .release_notes > notes
-
-cat notes
-'''
-                        
-                        
-//cat .release_notes | sed 's/$/\\n/' | tr -d '\n'
-
-                        
-/*                       
+"""
 sh """
 generate_post_data()
 {
