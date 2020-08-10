@@ -52,7 +52,7 @@ pipeline {
                         
                         if git tag -l | grep "$ENV_IMAGE_TAG" 
                         then
-                            git tag -d
+                            git tag -d "$ENV_IMAGE_TAG" 
                             git push ${GIT_URL_SF_BROKER} --tags
                         fi
                         
