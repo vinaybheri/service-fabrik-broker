@@ -115,11 +115,15 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 
 """ > .release_notes
+
+while read line 
+do
+echo -n "${line}\n"
+done < .release_notes > notes
+
+cat notes
 '''
                         
-                        sh "sed ':a;N;$!ba;s/\n/\\n/g' .release_notes"
-    
-                        //sh """cat .release_notes | sed "s/$/\\n/" | tr -d "\n""""
                         
 //cat .release_notes | sed 's/$/\\n/' | tr -d '\n'
 
