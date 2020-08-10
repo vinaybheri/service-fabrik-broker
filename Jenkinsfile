@@ -8,6 +8,8 @@ pipeline {
         ENV_IMAGE_TAG = "${env.IMAGE_TAG}"
         GITHUB_OS_ORG = "vinaybheri"
         GIT_URL_SF_CREDENTIALS = "https://${GITHUB_WDF_TOKEN}@${GITHUB_WDF_HOST}/servicefabrik/credentials.git"
+        GIT_URL_SF_BROKER = "https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker.git"
+        
     }
     agent any
     
@@ -50,7 +52,7 @@ pipeline {
                         pwd
                         ls -l
                         git tag ${ENV_IMAGE_TAG}
-                        git push --tags
+                        git push ${GIT_URL_SF_BROKER} --tags
                         echo "installing kubectl"
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
