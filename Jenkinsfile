@@ -80,7 +80,7 @@ pipeline {
                         commit_list="$(git log --pretty=format:"%h: %s\\n" HEAD...${last_tag_version})"
 
 echo """
-## New features/Bug fixes\n
+## New features/Bug fixes\\n
 ${commit_list}\\n
 \\n
 ## Supported K8S Version\\n
@@ -123,7 +123,7 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.\\n
 \\n
 """ > .release_notes
 
-text="$(cat .release_notes | tr -d '\n' | tr -d '"')"
+text=$(tr -d '\n' .release_notes| tr -d '"')
 
 generate_post_data()
 {
