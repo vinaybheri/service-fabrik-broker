@@ -116,11 +116,13 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 """ > .release_notes
 '''
+    
+                        sh """cat .release_notes | sed 's/$/\\n/' | tr -d '\n'"""
                         
 //cat .release_notes | sed 's/$/\\n/' | tr -d '\n'
 
                         
-                       
+/*                       
 sh """
 generate_post_data()
 {
@@ -139,7 +141,7 @@ generate_post_data
                        repo_full_name="${GITHUB_OS_ORG}/service-fabrik-broker"
 #echo "Create release $ENV_IMAGE_TAG for $repo_full_name :  branch: $GIT_BRANCH"
 #curl --data "$(generate_post_data)" "https://api.github.com/repos/$repo_full_name/releases?access_token=$GITHUB_OS_TOKEN"       
-                        """
+                        """*/
                     }
                 }
             
