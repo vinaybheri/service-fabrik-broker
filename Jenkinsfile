@@ -52,7 +52,7 @@ pipeline {
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
                         chmod +x ./kubectl
-                        mv ./kubectl /usr/bin
+                        mv ./kubectl /usr/local/bin
                         kubectl
                         '''
                     }
