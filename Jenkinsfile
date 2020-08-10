@@ -29,7 +29,7 @@ pipeline {
                 environment name: 'RELEASE', value: 'true'
             }   
             stages {
-            stage('continue'){
+            stage('Release - continue'){
                 input{ 
                      message "Press Ok to continue"  
                 }
