@@ -103,7 +103,7 @@ EOF
                     pull_request_data="$(cat << EOF
 {
   "title": "Adding Helm Chart package: interoperator-${ENV_IMAGE_TAG}.tgz",
-  "base": "master",
+  "base": "gh-pages",
   "head": "${GITHUB_OS_ORG}:dev_pr_gh-pages",
   "body": "Adding New Helm Chart package"
 }
