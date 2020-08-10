@@ -118,7 +118,7 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 while read line 
 do
-echo -n "${line}\n"
+echo -n "${line}\\n"
 done < .release_notes > notes
 
 cat notes
