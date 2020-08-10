@@ -63,7 +63,7 @@ pipeline {
             }
          
                     
-            stage('Release - Update Version') {
+            /*stage('Release - Update Version') {
               steps {
                 echo "Stage: Release"
      
@@ -150,7 +150,7 @@ EOF
                          
                  }   
             }
-      }
+      }*/
         }
         }
     
