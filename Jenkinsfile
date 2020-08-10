@@ -30,8 +30,10 @@ pipeline {
             }   
             stages {
             stage('Release - continue'){
+                steps {
                 input{ 
                      message "Press Ok to continue"  
+                }
                 }
             }
                     
