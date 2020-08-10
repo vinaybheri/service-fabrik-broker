@@ -98,7 +98,7 @@ helm install --set cluster.host=sf.ingress.< clusterdomain > --namespace interop
 ### Deploy SFClusters, SFServices and SFPlans and Register with Interoperator
 Please create sfcluster CRs and add reference to secret which contains the its kubeconfig.
 For multi-cluster support, all corresponding sfcluster CRs need to be created and their kubeconfig needs to be supplied in the corresponding secret.
-Please note that sfcluster, sfservice and sfplans need to be deployed in the same namespace where SF is deployed (default is \`interoperator\`).
+Please note that sfcluster, sfservice and sfplans need to be deployed in the same namespace where SF is deployed (default is \\`interoperator\\`).
 ## Upgrade from the earlier releases(special handling, downtime if any)
 
 To add service fabrik interoperator helm chart repo if not already added
