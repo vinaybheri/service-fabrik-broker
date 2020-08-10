@@ -56,6 +56,16 @@ pipeline {
                         export PATH="$PATH:$PWD/bin"
                         mv ./kubectl bin/
                         kubectl
+                        
+                        last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$new_tag_version" | tail -1)"
+                        commit_list="$(git log --pretty=format:"%h: %s" HEAD...${last_tag_version})"
+
+                        echo """
+## New features/Bug fixes
+${commit_list}
+
+"""
+
                         '''
                     }
                 }
