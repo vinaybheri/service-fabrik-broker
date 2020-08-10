@@ -25,9 +25,7 @@ pipeline {
                 git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 echo "[TEST_INFO] : setup"
-                echo "PWD: $PWD"
-                sh 'ls $WORKSPACE'
-                sh 'echo "[TEST_INFO] : env tag : ${ENV_IMAGE_TAG}"'
+                echo "GIT_BRANCH: $GIT_BRANCH"
             }
         }
         stage('Release') {
@@ -121,8 +119,23 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 """ > .release_notes
                         text=$(cat .release_notes | sed 's/$/\\n/' | tr -d '\n') 
 
-                        echo "$text"
-                        
+generate_post_data()
+{
+  cat <<EOF
+{
+  "tag_name": "${ENV_IMAGE_TAG}",
+  "target_commitish": "$GIT_BRANCH",
+  "name": "${ENV_IMAGE_TAG}",
+  "body": "$text",
+  "draft": false,
+  "prerelease": false
+}
+EOF
+}
+                        repo_full_name="${GITHUB_OS_ORG}/service-fabrik-broker"
+echo "Create release $ENV_IMAGE_TAG for $repo_full_name :  branch: $GIT_BRANCH"
+curl --data "$(generate_post_data)" "https://api.github.com/repos/$repo_full_name/releases?access_token=$GITHUB_OS_TOKEN"
+          
                         '''
                     }
                 }
