@@ -124,7 +124,7 @@ generate_post_data()
   "tag_name": "${ENV_IMAGE_TAG}",
   "target_commitish": "$GIT_BRANCH",
   "name": "${ENV_IMAGE_TAG}",
-  "body": "$(cat .release_notes | sed 's/$/\\n/')",
+  "body": "$(cat .release_notes | sed 's/$/\n/' | tr -d '\n')",
   "draft": false,
   "prerelease": false
 }
