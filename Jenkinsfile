@@ -22,7 +22,7 @@ pipeline {
                 setupPipelineEnvironment script: this
                 echo "[TEST_INFO] : setup"
                 echo "PWD: $PWD"
-                sh "printenv"
+                sh 'ls $WORKSPACE'
                 sh 'echo "[TEST_INFO] : env tag : ${ENV_IMAGE_TAG}"'
             }
         }
