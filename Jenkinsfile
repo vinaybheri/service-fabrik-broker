@@ -86,10 +86,10 @@ Interoperator requires **helm version >= 3.0.0**, and is **not supported by helm
 """ > .release_notes
 echo """
 To add service fabrik interoperator helm chart repo
-\`\`\`shell
+\\`\\`\\`shell
 helm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts
 helm repo update
-\`\`\`
+\\`\\`\\`
 """ >> .release_notes
 
                         '''
