@@ -62,12 +62,12 @@ pipeline {
                         curl https://stedolan.github.io/jq/download/linux64/jq --output bin/jq
                         chmod +x bin/jq
                         
-                        git clone "${GIT_URL_SF_CREDENTIALS}" "/tmp/sfcredentials"
-                        export KUBECONFIG="/tmp/sfcredentials/k8s/n/kubeconfig.yaml"
+                        git clone "${GIT_URL_SF_CREDENTIALS}" "sfcredentials"
+                        export KUBECONFIG="$WORKSPACE/sfcredentials/k8s/n/kubeconfig.yaml"
                         K8S_VERSION_N=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
-                        export KUBECONFIG="/tmp/sfcredentials/k8s/n-1/kubeconfig.yaml"
+                        export KUBECONFIG="$WORKSPACE/sfcredentials/k8s/n-1/kubeconfig.yaml"
                         K8S_VERSION_N_1=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
-                        export KUBECONFIG="/tmp/sfcredentials/k8s/n-2/kubeconfig.yaml"
+                        export KUBECONFIG="$WORKSPACE/sfcredentials/k8s/n-2/kubeconfig.yaml"
                         K8S_VERSION_N_2=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
                         
                         last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
