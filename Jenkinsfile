@@ -122,7 +122,7 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.\\n
 \\n
 """ > .release_notes
 
-text=$(cat .release_notes| tr -d '"' )
+text=$(cat .release_notes| tr -d '\n' | tr -d '"' )
 
 generate_post_data()
 {
