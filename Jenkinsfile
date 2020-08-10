@@ -5,7 +5,7 @@ pipeline {
         WHITESOURCE_ORG_TOKEN = credentials('whitesource_org_token')
         GITHUB_OS_TOKEN = credentials('GithubOsToken')
         ENV_IMAGE_TAG = "${env.IMAGE_TAG}"
-        
+        GITHUB_OS_ORG = "vinaybheri"
     }
     agent any
     
@@ -41,7 +41,7 @@ pipeline {
                     git add helm-charts/interoperator/Chart.yaml
                     git add helm-charts/interoperator/values.yaml
                     git commit -m "Updating Helm chart and docker image versions"
-                    git push https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker dev_pr
+                    git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr
                     
                     pull_request_data="$(cat << EOF
 {
@@ -54,7 +54,7 @@ EOF
 )"
                     echo "pull_request_data: $pull_request_data"
                     
-                    curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/vinaybheri/service-fabrik-broker/pulls"
+                    curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/${GITHUB_OS_ORG}/service-fabrik-broker/pulls"
                     
                     '''
                   /*  sh '''
