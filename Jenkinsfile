@@ -53,7 +53,7 @@ pipeline {
                         if git tag -l | grep "$ENV_IMAGE_TAG" 
                         then
                             git tag -d "$ENV_IMAGE_TAG" 
-                            git push ${GIT_URL_SF_BROKER} --tags
+                            git push --delete ${GIT_URL_SF_BROKER} "$ENV_IMAGE_TAG"
                         fi
                         
                         echo "installing kubectl"
