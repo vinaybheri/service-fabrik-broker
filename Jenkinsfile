@@ -47,7 +47,7 @@ pipeline {
                         sh '''
                         pwd
                         ls -l
-                        
+                        git tag ${ENV_IMAGE_TAG}
                         echo "installing kubectl"
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
@@ -57,7 +57,7 @@ pipeline {
                         mv ./kubectl bin/
                         kubectl
                         
-                        last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$new_tag_version" | tail -1)"
+                        last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
                         commit_list="$(git log --pretty=format:"%h: %s" HEAD...${last_tag_version})"
 
                         echo """
