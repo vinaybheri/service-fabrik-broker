@@ -49,8 +49,6 @@ pipeline {
                         sh '''
                         pwd
                         ls -l
-                        git tag ${ENV_IMAGE_TAG}
-                        git push ${GIT_URL_SF_BROKER} --tags
                         echo "installing kubectl"
                         kubectl_version=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
                         curl --silent -LO "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl"
