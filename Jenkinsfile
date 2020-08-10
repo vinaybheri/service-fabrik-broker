@@ -46,7 +46,7 @@ pipeline {
             stage('Release - Create Tag And Notes') {
                 steps {
                     script {
-                        sh '''
+                        bash '''#!/bin/bash
                         pwd
                         ls -l
                         
@@ -77,9 +77,10 @@ pipeline {
                         K8S_VERSION_N_2=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
                         
                         last_tag_version="$(git tag | grep -E "[0-9]+.[0-9]+.[0-9]+" | grep -v "$ENV_IMAGE_TAG" | tail -1)"
-                        commit_list="$(git log --pretty=format:"%h: %s\\n" HEAD...${last_tag_version} | tr -d '\n')"
+                        commit_list="$(git log --pretty=format:"%h: %s\\n" HEAD...${last_tag_version})"
 
-text="""## New features/Bug fixes\\n${commit_list}\\n
+echo """## New features/Bug fixes\\n
+${commit_list}\\n
 \\n
 ## Supported K8S Version\\n
 - $(echo "${K8S_VERSION_N_2}" | awk -F "." '{print $1"."$2".x"}')\\n
@@ -119,9 +120,9 @@ helm --namespace interoperator upgrade -i --force --wait --set cluster.host=sf.i
 Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.\\n
 \\n
 \\n
-""" #> .release_notes
+""" > .release_notes
 
-#text=$(tr -d '\n' .release_notes| tr -d '"')
+text=$(cat .release_notes| tr -d '"' )
 
 generate_post_data()
 {
