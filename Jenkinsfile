@@ -116,8 +116,10 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 
 """ > .release_notes
 '''
+                        
+                        sh "cat .release_notes"
     
-                        sh """cat .release_notes | sed "s/$/\\n/" | tr -d "\n""""
+                        //sh """cat .release_notes | sed "s/$/\\n/" | tr -d "\n""""
                         
 //cat .release_notes | sed 's/$/\\n/' | tr -d '\n'
 
