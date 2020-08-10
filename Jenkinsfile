@@ -28,8 +28,9 @@ pipeline {
             when {
                 environment name: 'RELEASE', value: 'true'
             }   
-            //stage('Release - Update Version') {
-              steps  ('Release - Update Version') {
+            stages {
+            stage('Release - Update Version') {
+              steps {
                 echo "Stage: Release"
      
                 script {
@@ -60,9 +61,9 @@ EOF
                     '''
                 }
               }
-           // }
-            // stage('Release - Update gh-pages') {
-                 steps ('Release - Update gh-pages') {
+            }
+            stage('Release - Update gh-pages') {
+                 steps {
                      script {
                  
                     sh '''
@@ -118,8 +119,8 @@ EOF
                          
                  }   
             }
-        // }
-        
+      }
+        }
         }
     
     }
