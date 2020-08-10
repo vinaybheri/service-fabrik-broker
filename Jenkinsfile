@@ -29,6 +29,12 @@ pipeline {
                 environment name: 'RELEASE', value: 'true'
             }   
             stages {
+            stage('continue'){
+                input{ 
+                     message "Press Ok to continue"  
+                }
+            }
+                    
             stage('Release - Update Version') {
               steps {
                 echo "Stage: Release"
