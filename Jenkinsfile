@@ -84,6 +84,34 @@ ${commit_list}
 ## How to deploy Interoperator
 Interoperator requires **helm version >= 3.0.0**, and is **not supported by helm 2**.
 
+To add service fabrik interoperator helm chart repo
+\`\`\`shell
+helm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts
+helm repo update
+\`\`\`
+Deploy SF Interoperator using helm
+\`\`\`shell
+helm install --set cluster.host=sf.ingress.< clusterdomain > --namespace interoperator --version ${new_tag_version} interoperator interoperator-charts/interoperator
+\`\`\`
+**NOTE:** \`cluster.host\` should be within the [63 character limit](http://man7.org/linux/man-pages/man7/hostname.7.html).
+### Deploy SFClusters, SFServices and SFPlans and Register with Interoperator
+Please create sfcluster CRs and add reference to secret which contains the its kubeconfig.
+For multi-cluster support, all corresponding sfcluster CRs need to be created and their kubeconfig needs to be supplied in the corresponding secret.
+Please note that sfcluster, sfservice and sfplans need to be deployed in the same namespace where SF is deployed (default is \`interoperator\`).
+## Upgrade from the earlier releases(special handling, downtime if any)
+To add service fabrik interoperator helm chart repo if not already added
+\`\`\`shell
+# Assuming the repo name is chosen as interoperator-charts 
+helm repo add interoperator-charts https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts
+helm repo update
+\`\`\`
+Helm upgrade should take care of upgrading to the latest release.
+\`\`\`shell
+# Assuming current helm release name is interoperator
+helm --namespace interoperator upgrade -i --force --wait --set cluster.host=sf.ingress.< clusterdomain > --version ${new_tag_version} interoperator interoperator-charts/interoperator
+\`\`\`
+Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
+
 """
 
                         '''
