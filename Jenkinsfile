@@ -16,7 +16,7 @@ pipeline {
         stage('Setup') {
             steps {
                 deleteDir()
-                git url: 'https://github.com/cloudfoundry-incubator/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
+                git url: 'https://github.com/${GITHUB_OS_ORG}/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
                 sh 'rm -rf broker/applications/deployment_hooks'
@@ -118,13 +118,14 @@ pipeline {
             when {
                 environment name: 'RELEASE', value: 'true'
             }
-            stage('Release - Update Version') {
-                steps {
-                    script {
-                        def data = readYaml file: 'helm-charts/interoperator/Chart.yaml'
-                        sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
-                        sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
-                        sh '''
+            stages {
+                stage('Release - Update Version') {
+                    steps {
+                        script {
+                            def data = readYaml file: 'helm-charts/interoperator/Chart.yaml'
+                            sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
+                            sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
+                            sh '''
                             git checkout -b dev_pr
                             git diff
                             git add helm-charts/interoperator/Chart.yaml
@@ -142,9 +143,60 @@ EOF
 )"
                             curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/${GITHUB_OS_ORG}/service-fabrik-broker/pulls"
                         '''
+                        }
                     }
-                }
-            } //End Stage: Release - Update Version
+                } //End Stage: Release - Update Version
+                
+                stage('Release - Add Helm Chart') {
+                    steps {
+                        script {
+                            sh '''
+                            helm_version="v3.2.4"
+                            echo "Installing Helm :$helm_version"
+                            os_arch="linux"
+                            curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
+                            tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
+                            PATH="$PATH:$PWD/${os_arch}-amd64"
+                            export PATH
+                    
+                            helm version
+                    
+                            echo "Creating Helm Package"
+                            oldpath=$PWD
+                            cd helm-charts/interoperator
+                            helm package . || true
+                            ls -l
+                            echo "help package created"
+                    
+                            cd $oldpath
+                            rm -rf gh-pages
+                            git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
+                            echo "copying Helm package"
+                            cp helm-charts/interoperator/interoperator-${ENV_IMAGE_TAG}.tgz gh-pages/helm-charts/
+                            echo "copying Done"
+                            helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
+                            cd gh-pages
+                            git diff
+                            git checkout -b dev_pr_gh-pages
+                            git add helm-charts/interoperator-${ENV_IMAGE_TAG}.tgz
+                            git commit -m "Adding Helm Chart Package: interoperator-${ENV_IMAGE_TAG}.tgz"
+                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_gh-pages
+                    
+                            pull_request_data="$(cat << EOF
+{
+  "title": "Adding Helm Chart package: interoperator-${ENV_IMAGE_TAG}.tgz",
+  "base": "gh-pages",
+  "head": "${GITHUB_OS_ORG}:dev_pr_gh-pages",
+  "body": "Adding New Helm Chart package"
+}
+EOF
+)"
+                            curl -H "Authorization: token ${GITHUB_OS_TOKEN}" -X POST -d "${pull_request_data}" "https://api.github.com/repos/${GITHUB_OS_ORG}/service-fabrik-broker/pulls"
+                            '''     
+                        } 
+                    } 
+                }// End Stage: Release - Add Helm Chart
+            }
         } //End Stage: Release
     }
 }
