@@ -117,7 +117,7 @@ Refer detailed [upgrade docs](docs/interoperator-upgrades.md) for more info.
 """ > .release_notes
 '''
                         
-                        sh "cat .release_notes"
+                        sh """sed ':a;N;$!ba;s/\n/\\n /g' .release_notes"""
     
                         //sh """cat .release_notes | sed "s/$/\\n/" | tr -d "\n""""
                         
