@@ -30,7 +30,7 @@ pipeline {
                 sh 'rm -rf broker/test'
                 sh 'rm -rf webhooks'
             }
-        }
+        }// End Stage: Setup
         stage('DockerBuild') {
             parallel {
                 stage('Build Broker Image') {
@@ -60,9 +60,9 @@ pipeline {
                     }
                 }
             }
-        }
+        }//End Stage: DockerBuild
 
-        stage('Security scans') {
+        /*stage('Security scans') {
             parallel {
                 stage('ProtecodeScan - Broker') {
                     steps {
@@ -115,8 +115,8 @@ pipeline {
                     }
                 }
             }
-        }
-        
+        }//End Stage: Security Scan
+        */
         stage('Release') {
             when {
                 environment name: 'RELEASE', value: 'true'
