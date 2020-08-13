@@ -60,35 +60,10 @@ pipeline {
                     }
                 }
             }
-        }//End Stage: DockerBuild
-
-        /*stage('Security scans') {
+        } //End Stage: DockerBuild
+        
+        stage('Whitesource scan') {
             parallel {
-                stage('ProtecodeScan - Broker') {
-                    steps {
-                        protecodeExecuteScan(script: this,
-                            protecodeCredentialsId: 'protecodeCredentialsId',
-                            protecodeGroup: "${INTOPERATOR_PROTECODE_GROUP_ID}",
-                            protecodeServerUrl: "${PROTECODE_SERVER_URL}",
-                            dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
-                            dockerImage: "images/service-fabrik-broker:${env.IMAGE_TAG}",
-                            dockerCredentialsId: 'InteroperatorDockerAuthConfigJson',
-                            reportFileName: 'protecode_report_broker.pdf')
-                    }
-                }
-                stage('ProtecodeScan - Interoperator') {
-                    steps {
-                        protecodeExecuteScan(script: this,
-                            protecodeCredentialsId: 'protecodeCredentialsId',
-                            protecodeGroup: "${INTOPERATOR_PROTECODE_GROUP_ID}",
-                            protecodeServerUrl: "${PROTECODE_SERVER_URL}",
-                            dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
-                            dockerImage: "images/service-fabrik-interoperator:${env.IMAGE_TAG}",
-                            dockerCredentialsId: 'InteroperatorDockerAuthConfigJson',
-                            reportFileName: 'protecode_report_interoperator.pdf')
-                    }
-                }
-
                 stage('WhitesourceScan - Broker') {
                     steps {
                         sh 'rm -rfv broker/package.json'
@@ -115,8 +90,37 @@ pipeline {
                     }
                 }
             }
-        }//End Stage: Security Scan
-        */
+        }//End Stage: Whitesource Scan
+
+        stage('Protecode Scan') {
+            parallel {
+                stage('ProtecodeScan - Broker') {
+                    steps {
+                        protecodeExecuteScan(script: this,
+                            protecodeCredentialsId: 'protecodeCredentialsId',
+                            protecodeGroup: "${INTOPERATOR_PROTECODE_GROUP_ID}",
+                            protecodeServerUrl: "${PROTECODE_SERVER_URL}",
+                            dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
+                            dockerImage: "images/service-fabrik-broker:${env.IMAGE_TAG}",
+                            dockerCredentialsId: 'InteroperatorDockerAuthConfigJson',
+                            reportFileName: 'protecode_report_broker.pdf')
+                    }
+                }
+                stage('ProtecodeScan - Interoperator') {
+                    steps {
+                        protecodeExecuteScan(script: this,
+                            protecodeCredentialsId: 'protecodeCredentialsId',
+                            protecodeGroup: "${INTOPERATOR_PROTECODE_GROUP_ID}",
+                            protecodeServerUrl: "${PROTECODE_SERVER_URL}",
+                            dockerRegistryUrl: "https://${ARTIFACT_DOCKER_HOST_URL}",
+                            dockerImage: "images/service-fabrik-interoperator:${env.IMAGE_TAG}",
+                            dockerCredentialsId: 'InteroperatorDockerAuthConfigJson',
+                            reportFileName: 'protecode_report_interoperator.pdf')
+                    }
+                }
+            }
+        }//End Stage: Protecode Scan
+        
         stage('Release') {
             when {
                 environment name: 'RELEASE', value: 'true'
