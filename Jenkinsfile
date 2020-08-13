@@ -9,6 +9,9 @@ pipeline {
         GITHUB_OS_ORG = "vinaybheri"
         GIT_URL_SF_CREDENTIALS = "https://${GITHUB_WDF_TOKEN}@${GITHUB_WDF_HOST}/servicefabrik/credentials.git"
         GIT_URL_SF_BROKER = "https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker.git"
+        DEV_BRANCH_DOCKER = "dev_pr_${BUILD_NUMBER}"
+        DEV_BRANCH_GH_PAGES = "dev_pr_ghpages_${BUILD_NUMBER}"
+        HELM_VERSION = "v3.2.4"
     }
     agent any
     parameters {
@@ -19,7 +22,7 @@ pipeline {
         stage('Setup') {
             steps {
                 deleteDir()
-                git url: 'https://github.com/cloudfoundry-incubator/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
+                git url: 'https://github.com/vinaybheri/service-fabrik-broker', branch: 'master', credentialsId: 'GithubOsCredentialsId'
                 setupPipelineEnvironment script: this
                 sh 'rm -rf broker/applications/admin'
                 sh 'rm -rf broker/applications/deployment_hooks'
@@ -29,6 +32,8 @@ pipeline {
                 sh 'rm -rf broker/applications/scheduler'
                 sh 'rm -rf broker/test'
                 sh 'rm -rf webhooks'
+                sh 'echo "GITH_BRANCH: $GIT_BRANCH"'
+                sh 'printenv'
             }
         }// End Stage: Setup
         stage('DockerBuild') {
@@ -133,18 +138,18 @@ pipeline {
                             sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/Chart.yaml"""
                             sh """sed -i 's/${data.appVersion}/${ENV_IMAGE_TAG}/g' helm-charts/interoperator/values.yaml"""
                             sh '''
-                            git checkout -b dev_pr_${ENV_IMAGE_TAG}
+                            git checkout -b "${DEV_BRANCH_DOCKER}"
                             git diff
                             git add helm-charts/interoperator/Chart.yaml
                             git add helm-charts/interoperator/values.yaml
-                            git commit -m "Updating Helm chart and docker image versions"
-                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_${ENV_IMAGE_TAG}            
+                            git commit -m "Updating broker/Interoperator docker image versions:$ENV_IMAGE_TAG"
+                            git push "${GIT_URL_SF_BROKER}" "${DEV_BRANCH_DOCKER}"            
                             pull_request_data="$(cat << EOF
 {
   "title": "Updating docker Version",
-  "base": "master",
-  "head": "${GITHUB_OS_ORG}:dev_pr_${ENV_IMAGE_TAG}",
-  "body": "Updating new docker versions"
+  "base": "$GIT_BRANCH",
+  "head": "${GITHUB_OS_ORG}:${DEV_BRANCH_DOCKER}",
+  "body": "Updating broker/Interoperator docker image versions:$ENV_IMAGE_TAG"
 }
 EOF
 )"
@@ -158,11 +163,10 @@ EOF
                     steps {
                         script {
                             sh '''
-                            helm_version="v3.2.4"
-                            echo "Installing Helm :$helm_version"
+                            echo "Installing Helm :$HELM_VERSION"
                             os_arch="linux"
-                            curl --silent -LO "https://get.helm.sh/helm-${helm_version}-${os_arch}-amd64.tar.gz"
-                            tar -zxf "helm-${helm_version}-${os_arch}-amd64.tar.gz"
+                            curl --silent -LO "https://get.helm.sh/helm-${HELM_VERSION}-${os_arch}-amd64.tar.gz"
+                            tar -zxf "helm-${HELM_VERSION}-${os_arch}-amd64.tar.gz"
                             PATH="$PATH:$PWD/${os_arch}-amd64"
                             export PATH
                     
@@ -173,27 +177,27 @@ EOF
                             helm package . || true
                             ls -l
                             echo "helm package created"
-                    
                             cd $WORKSPACE
+                            
                             rm -rf gh-pages
-                            git clone "https://${GITHUB_OS_TOKEN}@github.com/vinaybheri/service-fabrik-broker" -b "gh-pages" "gh-pages"
+                            git clone "${GIT_URL_SF_BROKER}" -b "gh-pages" "gh-pages"
                             echo "copying Helm package"
                             cp helm-charts/interoperator/interoperator-${ENV_IMAGE_TAG}.tgz gh-pages/helm-charts/
                             echo "copying Done"
                             helm repo index --url https://cloudfoundry-incubator.github.io/service-fabrik-broker/helm-charts "gh-pages/helm-charts/"
                             cd gh-pages
                             git diff
-                            git checkout -b dev_pr_gh-pages_${ENV_IMAGE_TAG}
+                            git checkout -b "${DEV_BRANCH_GH_PAGES}"
                             git add helm-charts/interoperator-${ENV_IMAGE_TAG}.tgz
                             git commit -m "Adding Helm Chart Package: interoperator-${ENV_IMAGE_TAG}.tgz"
-                            git push https://${GITHUB_OS_TOKEN}@github.com/${GITHUB_OS_ORG}/service-fabrik-broker dev_pr_gh-pages_${ENV_IMAGE_TAG}
+                            git push "${GIT_URL_SF_BROKER}" "${DEV_BRANCH_GH_PAGES}"
                     
                             pull_request_data="$(cat << EOF
 {
   "title": "Adding Helm Chart package: interoperator-${ENV_IMAGE_TAG}.tgz",
   "base": "gh-pages",
-  "head": "${GITHUB_OS_ORG}:dev_pr_gh-pages_${ENV_IMAGE_TAG}",
-  "body": "Adding New Helm Chart package"
+  "head": "${GITHUB_OS_ORG}:${DEV_BRANCH_GH_PAGES}",
+  "body": "Adding Helm Chart Package: ${ENV_IMAGE_TAG}"
 }
 EOF
 )"
@@ -205,14 +209,13 @@ EOF
                 }// End Stage: Release - Add Helm Chart
                 
                 stage ('Release - Confirm') {
+                    input{ 
+                        message "Review the PR's created in previous stages.Proceed to continue after merging the PR's."  
+                    }
                     steps {
                         echo """
-                        *** Review the PR's created in previous stages ***
-                        *** Click on proceed after merging the PR's *** 
+                            Proceeding to create release tag and attach release note template.
                         """
-                    }
-                    input{ 
-                        message "Press Proceed to continue"  
                     }
                 } //End Stage: Release - Confirm
                 
@@ -300,7 +303,7 @@ cat <<EOF
 {
   "tag_name": "${ENV_IMAGE_TAG}",
   "target_commitish": "$GIT_BRANCH",
-  "name": "${ENV_IMAGE_TAG}",
+  "name": "Interoperator Release ${ENV_IMAGE_TAG}",
   "body": "$text",
   "draft": false,
   "prerelease": false
