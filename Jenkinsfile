@@ -146,7 +146,7 @@ pipeline {
                             git push "${GIT_URL_SF_BROKER}" "${DEV_BRANCH_DOCKER}"            
                             pull_request_data="$(cat << EOF
 {
-  "title": "Updating docker Version",
+  "title": "Updating broker/Interoperator docker image versions:$ENV_IMAGE_TAG",
   "base": "$GIT_BRANCH",
   "head": "${GITHUB_OS_ORG}:${DEV_BRANCH_DOCKER}",
   "body": "Updating broker/Interoperator docker image versions:$ENV_IMAGE_TAG"
@@ -188,13 +188,13 @@ EOF
                             cd gh-pages
                             git diff
                             git checkout -b "${DEV_BRANCH_GH_PAGES}"
-                            git add helm-charts/interoperator-${ENV_IMAGE_TAG}.tgz
+                            git add helm-charts
                             git commit -m "Adding Helm Chart Package: interoperator-${ENV_IMAGE_TAG}.tgz"
                             git push "${GIT_URL_SF_BROKER}" "${DEV_BRANCH_GH_PAGES}"
                     
                             pull_request_data="$(cat << EOF
 {
-  "title": "Adding Helm Chart package: interoperator-${ENV_IMAGE_TAG}.tgz",
+  "title": "Adding Helm Chart Package: ${ENV_IMAGE_TAG}",
   "base": "gh-pages",
   "head": "${GITHUB_OS_ORG}:${DEV_BRANCH_GH_PAGES}",
   "body": "Adding Helm Chart Package: ${ENV_IMAGE_TAG}"
